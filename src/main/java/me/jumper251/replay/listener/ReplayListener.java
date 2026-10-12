@@ -1,9 +1,15 @@
 package me.jumper251.replay.listener;
 
 
-
-import java.util.Arrays;
-
+import me.jumper251.replay.ReplaySystem;
+import me.jumper251.replay.filesystem.*;
+import me.jumper251.replay.legacy.LegacyUtils;
+import me.jumper251.replay.replaysystem.replaying.ReplayHelper;
+import me.jumper251.replay.replaysystem.replaying.ReplayPacketListener;
+import me.jumper251.replay.replaysystem.replaying.Replayer;
+import me.jumper251.replay.replaysystem.utils.entities.INPC;
+import me.jumper251.replay.utils.VersionUtil;
+import me.jumper251.replay.utils.version.MaterialBridge;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,31 +20,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.jumper251.replay.ReplaySystem;
-import me.jumper251.replay.filesystem.ConfigManager;
-import me.jumper251.replay.filesystem.ItemConfig;
-import me.jumper251.replay.filesystem.ItemConfigOption;
-import me.jumper251.replay.filesystem.ItemConfigType;
-import me.jumper251.replay.filesystem.Messages;
-import me.jumper251.replay.legacy.LegacyUtils;
-import me.jumper251.replay.replaysystem.replaying.ReplayHelper;
-import me.jumper251.replay.replaysystem.replaying.ReplayPacketListener;
-import me.jumper251.replay.replaysystem.replaying.Replayer;
-import me.jumper251.replay.replaysystem.utils.entities.INPC;
-import me.jumper251.replay.utils.VersionUtil;
-import me.jumper251.replay.utils.version.MaterialBridge;
+import java.util.Arrays;
 
 
 public class ReplayListener extends AbstractListener {
@@ -63,19 +49,19 @@ public class ReplayListener extends AbstractListener {
 				
 			if (itemType == ItemConfigType.FORWARD) {
 				if (isLeftClick) {
-					replayer.getUtils().forwardOneTick();
+					ReplayHelper.sendTitle(p, " ", "§e»» " + replayer.getUtils().cycleJumpGear(replayer) + "s", 20);
 				} else {
-					replayer.getUtils().forward();
-					ReplayHelper.sendTitle(p, " ", "§a»»", 20);
+					replayer.getUtils().forward(replayer.getJumpSeconds());
+					ReplayHelper.sendTitle(p, " ", "§a»» " + replayer.getJumpSeconds() + "s", 20);
 				}
 
 			}
 			if (itemType == ItemConfigType.BACKWARD) {
 				if (isLeftClick) {
-					replayer.getUtils().backwardOneTick();
+					ReplayHelper.sendTitle(p, " ", "§e«« " + replayer.getUtils().cycleJumpGear(replayer) + "s", 20);
 				} else {
-					replayer.getUtils().backward();
-					ReplayHelper.sendTitle(p, " ", "§c««", 20);
+					replayer.getUtils().backward(replayer.getJumpSeconds());
+					ReplayHelper.sendTitle(p, " ", "§c«« " + replayer.getJumpSeconds() + "s", 20);
 				}
 
 			}
@@ -147,7 +133,7 @@ public class ReplayListener extends AbstractListener {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {

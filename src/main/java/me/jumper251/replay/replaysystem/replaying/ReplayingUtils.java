@@ -20,11 +20,11 @@ import me.jumper251.replay.replaysystem.utils.MetadataBuilder;
 import me.jumper251.replay.replaysystem.utils.NPCManager;
 import me.jumper251.replay.replaysystem.utils.entities.*;
 import me.jumper251.replay.utils.LogUtils;
-import me.jumper251.replay.utils.version.MaterialBridge;
 import me.jumper251.replay.utils.MathUtils;
 import me.jumper251.replay.utils.VersionUtil;
 import me.jumper251.replay.utils.VersionUtil.VersionEnum;
 import me.jumper251.replay.utils.version.EntityBridge;
+import me.jumper251.replay.utils.version.MaterialBridge;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -49,6 +49,8 @@ public class ReplayingUtils {
 	
 	private HashMap<Integer, Integer> hooks;
 	private List<Integer> tnt;
+
+	private static final int[] JUMP_GEARS = {1, 5, 10};
 	
 	public ReplayingUtils(Replayer replayer) {
 		this.replayer = replayer;
@@ -392,16 +394,20 @@ public class ReplayingUtils {
 		}
 	}
 
-	public void forward() {
+	public void forward(int seconds) {
 		boolean paused = this.replayer.isPaused();
 		
 		this.replayer.setPaused(true);
 		int currentTick = this.replayer.getCurrentTicks();
-		int forwardTicks = currentTick + (10 * 20);
+		int forwardTicks = currentTick + (seconds * 20);
 		int duration = this.replayer.getReplay().getData().getDuration();
 		
 		if ((forwardTicks + 2) >= duration) {
 			forwardTicks = duration - 20;
+		}
+
+		if (forwardTicks < currentTick) {
+			forwardTicks = currentTick;
 		}
 		
 		for (int i = currentTick; i < forwardTicks; i++) {
@@ -411,25 +417,19 @@ public class ReplayingUtils {
 		this.replayer.setPaused(paused);
 	}
 
-	public void forwardOneTick() {
-		int currentTick = this.replayer.getCurrentTicks();
-		int duration = this.replayer.getReplay().getData().getDuration();
-
-		if (currentTick + 1 >= duration) return;
-
-		this.replayer.executeTick(currentTick, ReplayingMode.FORWARD);
-		this.replayer.setCurrentTicks(currentTick + 1);
-	}
-	
-	public void backward() {
+	public void backward(int seconds) {
 		boolean paused = this.replayer.isPaused();
 		
 		this.replayer.setPaused(true);
 		int currentTick = this.replayer.getCurrentTicks();
-		int backwardTicks = currentTick - (10 * 20);
+		int backwardTicks = currentTick - (seconds * 20);
 		
 		if ((backwardTicks - 2) <= 0) {
 			backwardTicks = 1;
+		}
+
+		if (backwardTicks > currentTick) {
+			backwardTicks = currentTick;
 		}
 		
 		for (int i = currentTick; i > backwardTicks; i--) {
@@ -441,14 +441,19 @@ public class ReplayingUtils {
 		this.replayer.setPaused(paused);
 	}
 
-	public void backwardOneTick() {
-		int currentTick = this.replayer.getCurrentTicks();
+	public int cycleJumpGear(Replayer replayer) {
+		int current = replayer.getJumpSeconds();
+		int next = JUMP_GEARS[0];
 
-		if (currentTick - 1 < 0) return;
+		for (int i = 0; i < JUMP_GEARS.length; i++) {
+			if (JUMP_GEARS[i] == current) {
+				next = JUMP_GEARS[(i + 1) % JUMP_GEARS.length];
+				break;
+			}
+		}
 
-		this.replayer.executeTick(currentTick, ReplayingMode.REVERSED);
-		sendLastInvAction();
-		this.replayer.setCurrentTicks(currentTick - 1);
+		replayer.setJumpSeconds(next);
+		return next;
 	}
 	
 	public void jumpTo(Integer seconds) {

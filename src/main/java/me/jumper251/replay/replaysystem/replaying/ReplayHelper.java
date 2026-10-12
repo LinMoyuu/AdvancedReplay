@@ -1,5 +1,6 @@
 package me.jumper251.replay.replaysystem.replaying;
 
+import com.comphenix.packetwrapper.WrapperPlayServerChat;
 import com.comphenix.packetwrapper.WrapperPlayServerTickState;
 import com.comphenix.packetwrapper.WrapperPlayServerTitle;
 import com.comphenix.protocol.wrappers.EnumWrappers.TitleAction;
@@ -11,6 +12,8 @@ import me.jumper251.replay.utils.ReflectionHelper;
 import me.jumper251.replay.utils.VersionUtil;
 import me.jumper251.replay.utils.VersionUtil.VersionEnum;
 import me.jumper251.replay.utils.fetcher.TextureInfo;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -120,6 +123,18 @@ public class ReplayHelper {
         player.openInventory(inv);
     }
 
+
+    public static void sendActionBar(Player player, String text) {
+        if (VersionUtil.isAbove(VersionEnum.V1_12)) {
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(text));
+            return;
+        }
+
+        WrapperPlayServerChat packet = new WrapperPlayServerChat();
+        packet.setMessage(WrappedChatComponent.fromLegacyText(text));
+        packet.setPositionByte(WrapperPlayServerChat.POSITION_ACTION_BAR);
+        packet.sendPacket(player);
+    }
 
     public static void sendTitle(Player player, String title, String subTitle, int stay) {
         if (VersionUtil.isAbove(VersionEnum.V1_17)) {

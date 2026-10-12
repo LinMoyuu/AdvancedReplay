@@ -2,9 +2,7 @@ package me.jumper251.replay.replaysystem.replaying.session;
 
 import me.jumper251.replay.replaysystem.replaying.Replayer;
 import me.jumper251.replay.utils.VersionUtil;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import me.jumper251.replay.replaysystem.replaying.ReplayHelper;
 
 
 public enum ReplayProgressType implements ReplayProgression {
@@ -23,16 +21,14 @@ public enum ReplayProgressType implements ReplayProgression {
     ACTION_BAR {
         @Override
         public void update(Replayer replayer) {
-            if (VersionUtil.isBelow(VersionUtil.VersionEnum.V1_20)) return;
-
             int currentTicks = replayer.getCurrentTicks();
             int duration = replayer.getReplay().getData().getDuration();
             String format = "%s    §e%s §7/ §e%s    §6%s";
             String status = replayer.isPaused() ? "§cPaused" : "§aPlaying";
             String speed = replayer.getSpeed() + "x";
+            String text = String.format(format, status, formatTime(currentTicks), formatTime(duration), speed);
 
-            BaseComponent component = TextComponent.fromLegacy(String.format(format, status, formatTime(currentTicks), formatTime(duration), speed));
-            replayer.getWatchingPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
+            ReplayHelper.sendActionBar(replayer.getWatchingPlayer(), text);
         }
     },
     NONE {

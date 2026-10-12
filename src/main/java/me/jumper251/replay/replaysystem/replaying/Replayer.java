@@ -1,37 +1,9 @@
 package me.jumper251.replay.replaysystem.replaying;
 
-import java.util.ArrayList;
-
-
-
-import java.util.Collection;
-import java.util.HashMap;
-
-
-
-
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import me.jumper251.replay.filesystem.MessageBuilder;
-import me.jumper251.replay.filesystem.Messages;
-import me.jumper251.replay.filesystem.ItemConfig;
-import me.jumper251.replay.filesystem.ItemConfigType;
-import me.jumper251.replay.filesystem.ItemConfigOption;
-import me.jumper251.replay.replaysystem.replaying.session.ReplaySession;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-
-
 import me.jumper251.replay.ReplaySystem;
 import me.jumper251.replay.api.IReplayHook;
 import me.jumper251.replay.api.ReplayAPI;
-import me.jumper251.replay.filesystem.ConfigManager;
+import me.jumper251.replay.filesystem.*;
 import me.jumper251.replay.replaysystem.Replay;
 import me.jumper251.replay.replaysystem.data.ActionData;
 import me.jumper251.replay.replaysystem.data.ActionType;
@@ -39,9 +11,14 @@ import me.jumper251.replay.replaysystem.data.ReplayData;
 import me.jumper251.replay.replaysystem.data.types.ItemData;
 import me.jumper251.replay.replaysystem.data.types.LocationData;
 import me.jumper251.replay.replaysystem.data.types.SpawnData;
+import me.jumper251.replay.replaysystem.replaying.session.ReplaySession;
 import me.jumper251.replay.replaysystem.utils.entities.IEntity;
 import me.jumper251.replay.replaysystem.utils.entities.INPC;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.*;
 
 
 public class Replayer {
@@ -59,6 +36,7 @@ public class Replayer {
 	private BukkitRunnable run;
 	
 	private int currentTicks;
+	private int jumpSeconds = 1;
 	private double speed, tmpTicks;
 	
 	private boolean paused, started;
@@ -307,7 +285,15 @@ public class Replayer {
 	public double getSpeed() {
 		return speed;
 	}
-	
+
+	public int getJumpSeconds() {
+		return jumpSeconds;
+	}
+
+	public void setJumpSeconds(int jumpSeconds) {
+		this.jumpSeconds = jumpSeconds;
+	}
+
 	public int getCurrentTicks() {
 		return currentTicks;
 	}
