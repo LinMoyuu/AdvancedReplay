@@ -1,11 +1,10 @@
 package me.jumper251.replay.api;
 
+import me.jumper251.replay.replaysystem.Replay;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import me.jumper251.replay.replaysystem.Replay;
 
 public class ReplayLeaveEvent extends Event {
 
@@ -20,6 +19,10 @@ public class ReplayLeaveEvent extends Event {
         this.player = player;
     }
 
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     public Player getPlayer() {
         return player;
     }
@@ -30,10 +33,6 @@ public class ReplayLeaveEvent extends Event {
 
     @Override
     public HandlerList getHandlers() {
-        return HANDLERS;
-    }
-
-    public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 

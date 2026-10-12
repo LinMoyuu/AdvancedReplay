@@ -4,9 +4,9 @@ import org.bukkit.command.CommandSender;
 
 public class ConfigMessage {
 
-    private String key;
+    private final String key;
 
-    private String defaultMessage;
+    private final String defaultMessage;
 
     private String message;
 
@@ -30,12 +30,12 @@ public class ConfigMessage {
         return message != null ? message : defaultMessage;
     }
 
-    public String getFullMessage() {
-        return getBuilder().build();
-    }
-
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getFullMessage() {
+        return getBuilder().build();
     }
 
     public String getDefaultMessage() {

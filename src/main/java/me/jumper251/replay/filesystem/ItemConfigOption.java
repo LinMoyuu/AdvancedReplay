@@ -5,11 +5,11 @@ import org.bukkit.Material;
 
 public class ItemConfigOption {
 
-    private Material material;
+    private final Material material;
 
-    private String name;
+    private final String name;
 
-    private int slot;
+    private final int slot;
 
     private String owner;
 

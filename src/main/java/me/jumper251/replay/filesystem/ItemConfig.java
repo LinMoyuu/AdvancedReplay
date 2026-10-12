@@ -2,8 +2,8 @@ package me.jumper251.replay.filesystem;
 
 import me.jumper251.replay.ReplaySystem;
 import me.jumper251.replay.utils.LogUtils;
-import me.jumper251.replay.utils.version.MaterialBridge;
 import me.jumper251.replay.utils.VersionUtil;
+import me.jumper251.replay.utils.version.MaterialBridge;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
