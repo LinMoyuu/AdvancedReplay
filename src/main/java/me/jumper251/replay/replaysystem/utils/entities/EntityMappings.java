@@ -10,7 +10,7 @@ public class EntityMappings {
     private static EntityMappings instance;
 
 
-    private BiMap<String, Integer> entityLookup = HashBiMap.create();
+    private final BiMap<String, Integer> entityLookup = HashBiMap.create();
 
     private EntityMappings() {
         this.createMappings();

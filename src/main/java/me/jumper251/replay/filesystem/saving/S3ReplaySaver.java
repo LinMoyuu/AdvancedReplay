@@ -8,19 +8,21 @@ import me.jumper251.replay.replaysystem.data.ReplayData;
 import me.jumper251.replay.utils.fetcher.Consumer;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class S3ReplaySaver implements IReplaySaver {
-    private String endpointUrl;
-    private String accessKey;
-    private String secretKey;
-    private String bucketName;
+    private final String endpointUrl;
+    private final String accessKey;
+    private final String secretKey;
+    private final String bucketName;
 
-    private List<String> replayNameCache;
+    private final List<String> replayNameCache;
 
     private MinioClient minioClient;
 
@@ -79,7 +81,7 @@ public class S3ReplaySaver implements IReplaySaver {
             // 1. Write replay to temporary local file (taken from DefaultReplaySaver)
             File localReplayFile = new File(
                     ReplaySystem.getInstance().getDataFolder(),
-                    UUID.randomUUID().toString() + ".replaytmp"
+                    UUID.randomUUID() + ".replaytmp"
             );
 
             if (!localReplayFile.exists()) {
@@ -176,9 +178,7 @@ public class S3ReplaySaver implements IReplaySaver {
     @Override
     public boolean replayExists(String replayName) {
         // TODO: Change return type to CompletableFuture<Boolean>, to allow async checking of backend.
-        if (replayNameCache.contains(replayName))
-            return true;
-        return false;
+        return replayNameCache.contains(replayName);
     }
 
     @Override

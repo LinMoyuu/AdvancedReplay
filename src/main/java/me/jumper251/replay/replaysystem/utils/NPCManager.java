@@ -6,9 +6,9 @@ import com.comphenix.protocol.wrappers.Pair;
 import me.jumper251.replay.replaysystem.data.types.InvData;
 import me.jumper251.replay.replaysystem.data.types.ItemData;
 import me.jumper251.replay.replaysystem.data.types.SerializableItemStack;
-import me.jumper251.replay.utils.version.MaterialBridge;
 import me.jumper251.replay.utils.VersionUtil;
 import me.jumper251.replay.utils.VersionUtil.VersionEnum;
+import me.jumper251.replay.utils.version.MaterialBridge;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -234,9 +234,7 @@ public class NPCManager {
         if (type.equals("head") && isArmor(inv.getHelmet())) return true;
         if (type.equals("chest") && isArmor(inv.getChestplate())) return true;
         if (type.equals("leg") && isArmor(inv.getLeggings())) return true;
-        if (type.equals("boots") && isArmor(inv.getBoots())) return true;
-
-        return false;
+        return type.equals("boots") && isArmor(inv.getBoots());
     }
 
 

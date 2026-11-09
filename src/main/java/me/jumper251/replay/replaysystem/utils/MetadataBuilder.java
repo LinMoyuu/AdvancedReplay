@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 
 public class MetadataBuilder {
 
-    private WrappedDataWatcher data;
+    private final WrappedDataWatcher data;
 
     public MetadataBuilder(Entity en) {
         this.data = WrappedDataWatcher.getEntityWatcher(en).deepClone();

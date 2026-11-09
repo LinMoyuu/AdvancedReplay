@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
 
 public class ReplayOptimizer {
 
-    private Map<String, MovingData> lastMovements;
+    private final Map<String, MovingData> lastMovements;
 
-    private Map<String, Integer> playerMoveCounters;
+    private final Map<String, Integer> playerMoveCounters;
 
-    private Map<Integer, Integer> entityMovementCounters;
+    private final Map<Integer, Integer> entityMovementCounters;
 
-    private Map<Integer, Integer> velocityCounters;
+    private final Map<Integer, Integer> velocityCounters;
 
     public ReplayOptimizer() {
         this.lastMovements = new ConcurrentHashMap<>();

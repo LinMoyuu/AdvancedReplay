@@ -22,7 +22,7 @@ public enum EnchantmentBridge {
         });
     }
 
-    private String legacyName;
+    private final String legacyName;
 
     EnchantmentBridge(String legacyName) {
         this.legacyName = legacyName;

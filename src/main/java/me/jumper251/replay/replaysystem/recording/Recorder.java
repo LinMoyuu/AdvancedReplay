@@ -30,17 +30,17 @@ import java.util.*;
 
 public class Recorder {
 
-    private List<String> players;
+    private final List<String> players;
 
-    private Replay replay;
+    private final Replay replay;
 
-    private ReplayData data;
+    private final ReplayData data;
 
     private BukkitRunnable run;
     private int currentTick;
     private PacketRecorder packetRecorder;
 
-    private CommandSender sender;
+    private final CommandSender sender;
 
     public Recorder(Replay replay, List<Player> players, CommandSender sender) {
         this.players = new ArrayList<>();
@@ -157,9 +157,7 @@ public class Recorder {
         this.replay.setRecording(false);
 
 
-        if (ReplayManager.activeReplays.containsKey(this.replay.getId())) {
-            ReplayManager.activeReplays.remove(this.replay.getId());
-        }
+        ReplayManager.activeReplays.remove(this.replay.getId());
     }
 
     public void createSpawnAction(Player player, Location loc, boolean first) {

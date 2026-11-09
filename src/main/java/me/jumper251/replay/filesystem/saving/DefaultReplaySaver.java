@@ -27,7 +27,7 @@ public class DefaultReplaySaver implements IReplaySaver {
 
     private boolean reformatting;
 
-    private ExecutorService pool = Executors.newCachedThreadPool();
+    private final ExecutorService pool = Executors.newCachedThreadPool();
 
     public static boolean isValidName(String replayName) {
         return NAME_PATTERN.matcher(replayName).matches();

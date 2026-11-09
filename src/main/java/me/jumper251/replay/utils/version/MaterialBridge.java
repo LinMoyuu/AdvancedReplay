@@ -62,7 +62,7 @@ public enum MaterialBridge {
         });
     }
 
-    private String materialName;
+    private final String materialName;
 
     MaterialBridge(String materialName) {
         this.materialName = materialName;

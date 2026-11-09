@@ -18,6 +18,10 @@ public class BlockPositionData implements Serializable {
         this.z = z;
     }
 
+    public static BlockPositionData fromBlockPosition(BlockPosition blockPosition) {
+        return new BlockPositionData(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
+    }
+
     public int getX() {
         return x;
     }
@@ -28,10 +32,6 @@ public class BlockPositionData implements Serializable {
 
     public int getZ() {
         return z;
-    }
-
-    public static BlockPositionData fromBlockPosition(BlockPosition blockPosition) {
-        return new BlockPositionData(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
     }
 
     public BlockPosition toBlockPosition() {

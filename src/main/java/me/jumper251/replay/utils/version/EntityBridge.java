@@ -23,7 +23,7 @@ public enum EntityBridge {
         });
     }
 
-    private String legacyName;
+    private final String legacyName;
 
     EntityBridge(String legacyName) {
         this.legacyName = legacyName;
