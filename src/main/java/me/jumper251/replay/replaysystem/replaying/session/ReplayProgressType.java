@@ -1,10 +1,16 @@
 package me.jumper251.replay.replaysystem.replaying.session;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import me.jumper251.replay.replaysystem.replaying.Replayer;
 import me.jumper251.replay.utils.VersionUtil;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.entity.Player;
 
 
 public enum ReplayProgressType implements ReplayProgression {
@@ -23,7 +29,9 @@ public enum ReplayProgressType implements ReplayProgression {
     ACTION_BAR {
         @Override
         public void update(Replayer replayer) {
-            if (VersionUtil.isBelow(VersionUtil.VersionEnum.V1_20)) return;
+            boolean legacyChatPacket = VersionUtil.isCompatible(VersionUtil.VersionEnum.V1_8);
+            boolean legacyComponents = VersionUtil.isCompatible(VersionUtil.VersionEnum.V1_12);
+            if (!legacyChatPacket && !legacyComponents && VersionUtil.isBelow(VersionUtil.VersionEnum.V1_20)) return;
 
             int currentTicks = replayer.getCurrentTicks();
             int duration = replayer.getReplay().getData().getDuration();
@@ -31,8 +39,21 @@ public enum ReplayProgressType implements ReplayProgression {
             String status = replayer.isPaused() ? "§cPaused" : "§aPlaying";
             String speed = replayer.getSpeed() + "x";
 
-            BaseComponent component = TextComponent.fromLegacy(String.format(format, status, formatTime(currentTicks), formatTime(duration), speed));
-            replayer.getWatchingPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
+            String message = String.format(format, status, formatTime(currentTicks), formatTime(duration), speed);
+            Player watcher = replayer.getWatchingPlayer();
+            if (legacyChatPacket) {
+                ProtocolManager protocol = ProtocolLibrary.getProtocolManager();
+                PacketContainer packet = protocol.createPacket(PacketType.Play.Server.CHAT);
+                packet.getChatComponents().write(0, WrappedChatComponent.fromText(message));
+                // Position 2 displays chat packets in the action bar on 1.8.
+                packet.getBytes().write(0, (byte) 2);
+                protocol.sendServerPacket(watcher, packet);
+            } else if (legacyComponents) {
+                watcher.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+            } else {
+                BaseComponent component = TextComponent.fromLegacy(message);
+                watcher.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
+            }
         }
     },
     NONE {
