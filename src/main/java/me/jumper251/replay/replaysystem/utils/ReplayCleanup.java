@@ -4,11 +4,11 @@ import me.jumper251.replay.ReplaySystem;
 import me.jumper251.replay.filesystem.ConfigManager;
 import me.jumper251.replay.filesystem.saving.DatabaseReplaySaver;
 import me.jumper251.replay.filesystem.saving.DefaultReplaySaver;
+import me.jumper251.replay.filesystem.saving.IReplaySaver;
 import me.jumper251.replay.filesystem.saving.ReplaySaver;
 import me.jumper251.replay.utils.LogUtils;
 import org.bukkit.Bukkit;
 
-import java.io.File;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -17,27 +17,30 @@ import java.util.List;
 public class ReplayCleanup {
 
     public static void cleanupReplays() {
-        List<String> replays = ReplaySaver.getReplays();
+        IReplaySaver saver = ReplaySaver.getReplaySaver();
+        if (saver == null) return;
 
-        Bukkit.getScheduler().runTaskAsynchronously(ReplaySystem.getInstance(), () -> replays.forEach(ReplayCleanup::checkAndDelete));
+        List<String> replays = saver.getReplays();
+        Bukkit.getScheduler().runTaskAsynchronously(ReplaySystem.getInstance(),
+                () -> replays.forEach(replay -> checkAndDelete(saver, replay)));
     }
 
-    private static void checkAndDelete(String replay) {
-        LocalDate creationdDate = getCreationDate(replay);
+    private static void checkAndDelete(IReplaySaver saver, String replay) {
+        LocalDate creationDate = getCreationDate(saver, replay);
         LocalDate threshold = LocalDate.now().minusDays(ConfigManager.CLEANUP_REPLAYS);
 
-        if (creationdDate.isBefore(threshold)) {
+        if (creationDate.isBefore(threshold)) {
             LogUtils.log("Replay " + replay + " has expired. Removing it...");
-            ReplaySaver.delete(replay);
+            saver.deleteReplay(replay);
         }
     }
 
-    private static LocalDate getCreationDate(String replay) {
-        if (ReplaySaver.replaySaver instanceof DefaultReplaySaver) {
-            return fromMillis(new File(DefaultReplaySaver.DIR, replay + ".replay").lastModified());
+    private static LocalDate getCreationDate(IReplaySaver saver, String replay) {
+        if (saver instanceof DefaultReplaySaver) {
+            return fromMillis(((DefaultReplaySaver) saver).getReplayFile(replay).lastModified());
         }
 
-        if (ReplaySaver.replaySaver instanceof DatabaseReplaySaver) {
+        if (saver instanceof DatabaseReplaySaver) {
             return fromMillis(DatabaseReplaySaver.replayCache.get(replay).getTime());
         }
 

@@ -17,6 +17,7 @@ import me.jumper251.replay.utils.Updater;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 
 public class ReplaySystem extends JavaPlugin {
@@ -54,7 +55,6 @@ public class ReplaySystem extends JavaPlugin {
         getLogger().info("Loading Replay v" + getDescription().getVersion() + " by " + getDescription().getAuthors().get(0));
 
         ConfigManager.loadConfigs();
-        ReplayManager.register();
 
         if (ConfigManager.USE_DATABASE) {
             ReplaySaver.register(new DatabaseReplaySaver());
@@ -82,9 +82,16 @@ public class ReplaySystem extends JavaPlugin {
 
             ReplaySaver.register(s3ReplaySaver);
         } else {
-            ReplaySaver.register(new DefaultReplaySaver());
+            try {
+                ReplaySaver.register(new DefaultReplaySaver());
+            } catch (IllegalStateException e) {
+                getLogger().log(Level.SEVERE, e.getMessage(), e.getCause());
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
         }
 
+        ReplayManager.register();
         updater = new Updater();
         metrics = new Metrics(this, 2188);
 

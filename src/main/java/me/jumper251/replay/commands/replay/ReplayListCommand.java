@@ -6,6 +6,7 @@ import me.jumper251.replay.commands.SubCommand;
 import me.jumper251.replay.filesystem.Messages;
 import me.jumper251.replay.filesystem.saving.DatabaseReplaySaver;
 import me.jumper251.replay.filesystem.saving.DefaultReplaySaver;
+import me.jumper251.replay.filesystem.saving.IReplaySaver;
 import me.jumper251.replay.filesystem.saving.ReplaySaver;
 import me.jumper251.replay.replaysystem.data.ReplayInfo;
 import me.jumper251.replay.utils.MathUtils;
@@ -18,7 +19,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -97,11 +97,12 @@ public class ReplayListCommand extends SubCommand {
     }
 
     private Date getCreationDate(String replay) {
-        if (ReplaySaver.replaySaver instanceof DefaultReplaySaver) {
-            return new Date(new File(DefaultReplaySaver.DIR, replay + ".replay").lastModified());
+        IReplaySaver saver = ReplaySaver.getReplaySaver();
+        if (saver instanceof DefaultReplaySaver) {
+            return new Date(((DefaultReplaySaver) saver).getReplayFile(replay).lastModified());
         }
 
-        if (ReplaySaver.replaySaver instanceof DatabaseReplaySaver) {
+        if (saver instanceof DatabaseReplaySaver) {
             return new Date(DatabaseReplaySaver.replayCache.get(replay).getTime());
         }
 

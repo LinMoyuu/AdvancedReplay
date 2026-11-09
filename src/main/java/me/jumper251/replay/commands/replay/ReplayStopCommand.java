@@ -1,11 +1,11 @@
 package me.jumper251.replay.commands.replay;
 
 
-import me.jumper251.replay.ReplaySystem;
 import me.jumper251.replay.commands.AbstractCommand;
 import me.jumper251.replay.commands.SubCommand;
 import me.jumper251.replay.filesystem.Messages;
 import me.jumper251.replay.filesystem.saving.DefaultReplaySaver;
+import me.jumper251.replay.filesystem.saving.IReplaySaver;
 import me.jumper251.replay.filesystem.saving.ReplaySaver;
 import me.jumper251.replay.replaysystem.Replay;
 import me.jumper251.replay.utils.ReplayManager;
@@ -47,7 +47,10 @@ public class ReplayStopCommand extends SubCommand {
                 Messages.REPLAY_STOP_SAVING.arg("replay", name).send(cs);
                 replay.getRecorder().stop(true);
 
-                String path = ReplaySaver.replaySaver instanceof DefaultReplaySaver ? ReplaySystem.getInstance().getDataFolder() + "/replays/" + name + ".replay" : null;
+                IReplaySaver saver = ReplaySaver.getReplaySaver();
+                String path = saver instanceof DefaultReplaySaver
+                        ? ((DefaultReplaySaver) saver).getReplayFile(name).getAbsolutePath()
+                        : null;
 
                 if (path == null) {
                     Messages.REPLAY_STOP_SAVED.arg("replay", name).send(cs);

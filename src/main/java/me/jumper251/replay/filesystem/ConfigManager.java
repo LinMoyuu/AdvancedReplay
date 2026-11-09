@@ -32,6 +32,7 @@ public class ConfigManager {
     public static boolean RECORD_BLOCKS, REAL_CHANGES;
     public static boolean RECORD_ITEMS, RECORD_ENTITIES;
     public static boolean RECORD_CHAT;
+    private static String replayDirectory = "";
     public static boolean SAVE_STOP, RECORD_STARTUP, USE_OFFLINE_SKINS, HIDE_PLAYERS, UPDATE_NOTIFY, USE_DATABASE, ADD_PLAYERS;
     public static boolean WORLD_RESET;
     public static boolean USE_MODERN_PAUSE;
@@ -83,6 +84,7 @@ public class ConfigManager {
             cfg.set("general.save_on_stop", false);
             cfg.set("general.use_mysql", false);
             cfg.set("general.use_s3", false);
+            cfg.set("general.replay_directory", "");
             cfg.set("general.use_offline_skins", false);
             cfg.set("general.quality", "high");
             cfg.set("general.cleanup_replays", -1);
@@ -126,7 +128,10 @@ public class ConfigManager {
         CLEANUP_REPLAYS = cfg.getInt("general.cleanup_replays", -1);
         ADD_PLAYERS = cfg.getBoolean("general.add_new_players");
         UPDATE_NOTIFY = cfg.getBoolean("general.update_notifications");
-        if (initial) USE_DATABASE = cfg.getBoolean("general.use_mysql");
+        if (initial) {
+            USE_DATABASE = cfg.getBoolean("general.use_mysql");
+            replayDirectory = cfg.getString("general.replay_directory", "");
+        }
 
         WORLD_RESET = cfg.getBoolean("replaying.world.reset_changes", false);
         USE_MODERN_PAUSE = cfg.getBoolean("replaying.use_modern_pause", true);
@@ -160,6 +165,10 @@ public class ConfigManager {
 
 
         ItemConfig.loadData();
+    }
+
+    public static String getReplayDirectory() {
+        return replayDirectory;
     }
 
     public static void reloadConfig() {

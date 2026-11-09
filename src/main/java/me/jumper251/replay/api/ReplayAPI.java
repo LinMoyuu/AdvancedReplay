@@ -75,7 +75,7 @@ public class ReplayAPI {
         if (ReplayManager.activeReplays.containsKey(name)) {
             Replay replay = ReplayManager.activeReplays.get(name);
 
-            boolean shouldSave = save && (replay.getRecorder().getData().getActions().size() > 0 || !ignoreEmpty);
+            boolean shouldSave = save && (!replay.getRecorder().getData().getActions().isEmpty() || !ignoreEmpty);
             if (replay.isRecording()) replay.getRecorder().stop(shouldSave);
         }
     }
